@@ -18,10 +18,12 @@ public class Mario : MonoBehaviour
 
     private Stopwatch jumpTimer = new Stopwatch(0.2f);
 
+    Rigidbody2D body;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        body = GetComponent<Rigidbody2D>();   
     }
 
     // Update is called once per frame
@@ -45,16 +47,15 @@ public class Mario : MonoBehaviour
 
         Vector3 force = Vector3.right * h;
 
-        GetComponent<Rigidbody2D>().AddForce(force * movePower);
-
+        body.AddForce(force * movePower);
 
         if (isOnGround)
         {
-            float speed = GetComponent<Rigidbody2D>().velocity.magnitude;
+            float speed = body.velocity.magnitude;
 
             GetComponent<Animator>().SetFloat("speed", speed);
 
-            if (ShouldBreak(GetComponent<Rigidbody2D>().velocity.x, h))
+            if (ShouldBreak(body.velocity.x, h))
             {
                 if (!isBreaking)
                 {
@@ -67,25 +68,18 @@ public class Mario : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.K))
             {
+                body.AddForce(Vector3.up * jumpMaxPower, ForceMode2D.Impulse);
                 jumpTimer.Start();
             }
-
-            if(Input.GetKeyUp(KeyCode.K))
+        }
+        else
+        {
+            if (Input.GetKeyUp(KeyCode.K))
             {
-                if(jumpTimer.isCounting)
+                if (jumpTimer.isCounting)
                 {
                     jumpTimer.Stop();
-                    float jumpPower = Mathf.Lerp(jumpMinPower, jumpMaxPower, jumpTimer.time);
-                    GetComponent<Rigidbody2D>().AddForce(Vector3.up * jumpPower, ForceMode2D.Impulse);
-                }
-            }
-
-            if (jumpTimer.TimeSinceStart() > 0.17f)
-            {
-                if(jumpTimer.isCounting)
-                {
-                    jumpTimer.Stop();
-                    GetComponent<Rigidbody2D>().AddForce(Vector3.up * jumpMaxPower, ForceMode2D.Impulse);
+                    body.velocity = new Vector2(body.velocity.x, Mathf.Min(body.velocity.y, 10));
                 }
             }
         }
@@ -110,7 +104,7 @@ public class Mario : MonoBehaviour
     {
         bool result = false;
         Physics2D.queriesStartInColliders = false;
-        GetComponent<Rigidbody2D>().gravityScale = 5;
+        body.gravityScale = 5;
 
         bool frontHasGround = (Physics2D.Raycast(transform.position + Vector3.right * 0.5f, Vector2.down, 0.55f).transform != null);
         bool backHasGround = (Physics2D.Raycast(transform.position - Vector3.right * 0.5f, Vector2.down, 0.55f).transform != null);
@@ -119,7 +113,7 @@ public class Mario : MonoBehaviour
         if (frontHasGround || backHasGround || midHasGround)
         {
             result = true;
-            GetComponent<Rigidbody2D>().gravityScale = 1;
+            body.gravityScale = 1;
         }
 
         Physics2D.queriesStartInColliders = true;
