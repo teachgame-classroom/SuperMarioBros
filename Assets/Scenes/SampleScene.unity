@@ -255,7 +255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movePower: 20
-  jumpPower: 40
+  jumpPower: 25
 --- !u!95 &509624725
 Animator:
   serializedVersion: 3
