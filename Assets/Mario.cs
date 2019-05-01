@@ -15,15 +15,16 @@ public class Mario : MonoBehaviour
 
     private bool isBreaking;
     private bool isOnGround;
+    private bool isJumpingUp;
 
-    private Stopwatch jumpTimer = new Stopwatch(0.2f);
-
-    Rigidbody2D body;
+    private Rigidbody2D body;
+    private Animator anim;
 
     // Start is called before the first frame update
     void Start()
     {
-        body = GetComponent<Rigidbody2D>();   
+        body = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -53,7 +54,7 @@ public class Mario : MonoBehaviour
         {
             float speed = body.velocity.magnitude;
 
-            GetComponent<Animator>().SetFloat("speed", speed);
+            anim.SetFloat("speed", speed);
 
             if (ShouldBreak(body.velocity.x, h))
             {
@@ -61,30 +62,37 @@ public class Mario : MonoBehaviour
                 {
                     Debug.Log("Break");
                     isBreaking = true;
-                    GetComponent<Animator>().ResetTrigger("break");
-                    GetComponent<Animator>().SetTrigger("break");
+                    anim.ResetTrigger("break");
+                    anim.SetTrigger("break");
                 }
             }
 
             if (Input.GetKeyDown(KeyCode.K))
             {
                 body.AddForce(Vector3.up * jumpMaxPower, ForceMode2D.Impulse);
-                jumpTimer.Start();
+                Debug.Log("Jump Up Speed:" + body.velocity.magnitude);
+                isJumpingUp = true;
+                //jumpTimer.Start();
             }
         }
         else
         {
+            if(body.velocity.y < 0)
+            {
+                isJumpingUp = false;
+            }
+
             if (Input.GetKeyUp(KeyCode.K))
             {
-                if (jumpTimer.isCounting)
+                if (isJumpingUp)
                 {
-                    jumpTimer.Stop();
+                    isJumpingUp = false;
                     body.velocity = new Vector2(body.velocity.x, Mathf.Min(body.velocity.y, 10));
                 }
             }
         }
 
-        GetComponent<Animator>().SetBool("grounded", isOnGround);
+        anim.SetBool("grounded", isOnGround);
     }
 
     bool ShouldBreak(float speed, float accerlation)
@@ -103,12 +111,24 @@ public class Mario : MonoBehaviour
     bool CheckGround()
     {
         bool result = false;
-        Physics2D.queriesStartInColliders = false;
         body.gravityScale = 5;
 
-        bool frontHasGround = (Physics2D.Raycast(transform.position + Vector3.right * 0.5f, Vector2.down, 0.55f).transform != null);
-        bool backHasGround = (Physics2D.Raycast(transform.position - Vector3.right * 0.5f, Vector2.down, 0.55f).transform != null);
+        Physics2D.queriesStartInColliders = false;
+
+        // 在前方有没有地面
+        bool frontHasGround = (Physics2D.Raycast(transform.position + Vector3.right * 0.53f, Vector2.down, 0.55f).transform != null);
+
+        Debug.DrawLine(transform.position + Vector3.right * 0.53f, transform.position + Vector3.right * 0.53f + Vector3.down * 0.55f, Color.yellow);
+
+        // 在后方有没有地面
+        bool backHasGround = (Physics2D.Raycast(transform.position - Vector3.right * 0.53f, Vector2.down, 0.55f).transform != null);
+
+        Debug.DrawLine(transform.position - Vector3.right * 0.53f, transform.position - Vector3.right * 0.53f + Vector3.down * 0.55f, Color.yellow);
+
+        // 在正下方有没有地面
         bool midHasGround = (Physics2D.Raycast(transform.position, Vector2.down, 0.55f).transform != null);
+
+        Debug.DrawLine(transform.position , transform.position + Vector3.down * 0.55f, Color.yellow);
 
         if (frontHasGround || backHasGround || midHasGround)
         {
