@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Mario : MonoBehaviour
 {
+    public int state = 0;
+
     [Range(0,20)]
     public float movePower = 10;
 

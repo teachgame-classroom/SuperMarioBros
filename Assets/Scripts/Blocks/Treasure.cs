@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Treasure : MonoBehaviour
+public class Treasure : Block
 {
     public AudioClip hitSound;
     public AudioClip emptySound;
     private int hitCount = 3;
-    private Animator anim;
 
     // Start is called before the first frame update
     void Start()
     {
-        anim = GetComponent<Animator>();
+        OnStart();
     }
 
     // Update is called once per frame
@@ -21,7 +20,7 @@ public class Treasure : MonoBehaviour
         
     }
 
-    void OnHit()
+    protected override void OnHit(GameObject gameObject)
     {
         if (hitCount <= 0)  // 金币已经顶空的时候，不播动画，只播顶空声音
         {
@@ -43,13 +42,8 @@ public class Treasure : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    protected override void OnCollisionEnter2D(Collision2D collision)
     {
-        OnHit();
-
-        if (collision.contacts[0].normal.y > 0)
-        {
-            
-        }
+        base.OnCollisionEnter2D(collision);
     }
 }
