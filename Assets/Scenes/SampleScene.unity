@@ -160,6 +160,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy_1 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 1887223001074559267, guid: 5d7861c7db0cd1047be64eac4bada083,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 1239727334204109379, guid: 5d7861c7db0cd1047be64eac4bada083,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -418,7 +423,7 @@ GameObject:
   - component: {fileID: 509624723}
   - component: {fileID: 509624724}
   - component: {fileID: 509624725}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Mario
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -481,7 +486,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 509624719}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -101.79, y: -4.93, z: 0}
+  m_LocalPosition: {x: -101.82, y: -5.43, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -521,10 +526,10 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.5}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 0}
     oldSize: {x: 1, y: 1}
     newSize: {x: 0.16, y: 0.16}
     adaptiveTilingThreshold: 0.5
@@ -532,7 +537,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.75, y: 1}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &509624724
 MonoBehaviour:
@@ -550,6 +555,31 @@ MonoBehaviour:
   movePower: 20
   jumpMinPower: 10
   jumpMaxPower: 28
+  mario_s:
+  - {fileID: 21300002, guid: e7a7811aa4993e04e8156e0cd860e5ed, type: 3}
+  - {fileID: 21300000, guid: e7a7811aa4993e04e8156e0cd860e5ed, type: 3}
+  - {fileID: 21300006, guid: e7a7811aa4993e04e8156e0cd860e5ed, type: 3}
+  - {fileID: 21300010, guid: e7a7811aa4993e04e8156e0cd860e5ed, type: 3}
+  - {fileID: 21300012, guid: e7a7811aa4993e04e8156e0cd860e5ed, type: 3}
+  - {fileID: 21300016, guid: e7a7811aa4993e04e8156e0cd860e5ed, type: 3}
+  mario_b:
+  - {fileID: 21300048, guid: e7a7811aa4993e04e8156e0cd860e5ed, type: 3}
+  - {fileID: 21300050, guid: e7a7811aa4993e04e8156e0cd860e5ed, type: 3}
+  - {fileID: 21300052, guid: e7a7811aa4993e04e8156e0cd860e5ed, type: 3}
+  - {fileID: 21300054, guid: e7a7811aa4993e04e8156e0cd860e5ed, type: 3}
+  - {fileID: 21300056, guid: e7a7811aa4993e04e8156e0cd860e5ed, type: 3}
+  - {fileID: 21300058, guid: e7a7811aa4993e04e8156e0cd860e5ed, type: 3}
+  mario_f:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  marioControllers:
+  - {fileID: 9100000, guid: 03e9d0404d2621a469311d3546f77927, type: 2}
+  - {fileID: 22100000, guid: 5bb6d14cc6378a548b12841550a46777, type: 2}
+  - {fileID: 0}
 --- !u!95 &509624725
 Animator:
   serializedVersion: 3
@@ -839,7 +869,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 707988075}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d3623274dacb634e90fbb68c739f481, type: 3}
+  m_Script: {fileID: 11500000, guid: 2b4a7b88182d5684ea86bda4c69769ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &707988077
@@ -866,7 +896,7 @@ GameObject:
   m_Component:
   - component: {fileID: 755518240}
   - component: {fileID: 755518241}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -974,7 +1004,7 @@ GameObject:
   - component: {fileID: 836916673}
   - component: {fileID: 836916672}
   - component: {fileID: 836916671}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Tileset_0 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1363,7 +1393,7 @@ GameObject:
   - component: {fileID: 1291192673}
   - component: {fileID: 1291192672}
   - component: {fileID: 1291192674}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Tileset_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1486,7 +1516,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1596299337}
   - component: {fileID: 1596299336}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: World 1-1_0
   m_TagString: Stage
   m_Icon: {fileID: 0}
@@ -1859,15 +1889,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy_1 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1887223001074559267, guid: 5d7861c7db0cd1047be64eac4bada083,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 1239727334204109379, guid: 5d7861c7db0cd1047be64eac4bada083,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -94.82
+      value: -94.22
       objectReference: {fileID: 0}
     - target: {fileID: 1239727334204109379, guid: 5d7861c7db0cd1047be64eac4bada083,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5.42
+      value: -5.39
       objectReference: {fileID: 0}
     - target: {fileID: 1239727334204109379, guid: 5d7861c7db0cd1047be64eac4bada083,
         type: 3}
@@ -1930,7 +1965,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2119669691}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Colliders
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1981,6 +2016,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Treasure
+      objectReference: {fileID: 0}
+    - target: {fileID: 694423771404950448, guid: abac089029f882a4cb66e3126d5b45b7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 694423771404950453, guid: abac089029f882a4cb66e3126d5b45b7,
         type: 3}
@@ -2037,6 +2077,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9076056767615273751, guid: abac089029f882a4cb66e3126d5b45b7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: abac089029f882a4cb66e3126d5b45b7, type: 3}
 --- !u!1001 &708855495930017175
@@ -2050,6 +2095,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Enemy_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1887223001074559267, guid: 5d7861c7db0cd1047be64eac4bada083,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 1239727334204109379, guid: 5d7861c7db0cd1047be64eac4bada083,
         type: 3}

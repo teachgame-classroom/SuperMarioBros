@@ -20,20 +20,48 @@ public class Mario : MonoBehaviour
     [Range(20, 30)]
     public float jumpMaxPower = 25;
 
+    private bool invincible;
     private bool isBreaking;
     private bool isOnGround;
     private bool isJumpingUp;
+    private bool isChangingState;
+
+    private float invincibleTime = 5f;
+    private float invincibleBeginTime;
+    private float changeStateBeginTime;
+    private float changeStatePauseTime = 1f;
+    private float blinkInterval = 0.05f;
+    private float lastBlinkTime;
 
     private Rigidbody2D body;
+    private Collider2D col;
+
+    public Sprite[] mario_s;
+    public Sprite[] mario_b;
+    public Sprite[] mario_f;
+
+    public RuntimeAnimatorController[] marioControllers;
     private Animator anim;
 
+    private int spriteIndex;
+    private Sprite oldSprite;
+    private SpriteRenderer spriteRenderer;
+
+    private AudioClip powerupClip;
+    private AudioClip pipeClip;
     private AudioClip dieClip;
 
     // Start is called before the first frame update
     void Start()
     {
         body = GetComponent<Rigidbody2D>();
+        col = GetComponent<Collider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
         anim = GetComponent<Animator>();
+
+        powerupClip = Resources.Load<AudioClip>("Sounds/smb_powerup");
+        pipeClip = Resources.Load<AudioClip>("Sounds/smb_pipe");
         dieClip = Resources.Load<AudioClip>("Sounds/smb_mariodie");
     }
 
@@ -42,20 +70,96 @@ public class Mario : MonoBehaviour
     {
         if(state != MARIO_DIE)
         {
+            if(!isChangingState)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha1))
+                {
+                    BeginChangeState(MARIO_SMALL);
+                }
+
+                if (Input.GetKeyDown(KeyCode.Alpha2))
+                {
+                    BeginChangeState(MARIO_BIG);
+                }
+            }
+
+            if (isChangingState)
+            {
+                if(Time.unscaledTime - changeStateBeginTime < changeStatePauseTime)
+                {
+                    if (Time.unscaledTime - lastBlinkTime > blinkInterval)
+                    {
+                        //Debug.Log("Last Blink Time:" + lastBlinkTime);
+                        if (spriteRenderer.sprite == oldSprite)
+                        {
+                            Debug.Log("change to new");
+                            ChangeSprite(state, spriteIndex);
+                        }
+                        else
+                        {
+                            Debug.Log("change to old");
+                            spriteRenderer.sprite = oldSprite;
+                        }
+
+                        lastBlinkTime = Time.unscaledTime;
+                    }
+
+                    return;
+                }
+                else
+                {
+                    ChangeState(state);
+                }
+            }
+
+            if(invincible)
+            {
+                Debug.Log("Invincible");
+                if(Time.unscaledTime - invincibleBeginTime < invincibleTime)
+                {
+                    Debug.Log("Time.time:" + Time.time + ",lastBlinkTime:" + lastBlinkTime);
+
+                    if (Time.unscaledTime - lastBlinkTime > blinkInterval * 3)
+                    {
+                        Debug.Log("BlinkTime");
+
+                        if (spriteRenderer.color == Color.white)
+                        {
+                            Debug.Log("Change Clean");
+                            spriteRenderer.color = new Color(1, 1, 1, 0.5f);
+                        }
+                        else
+                        {
+                            Debug.Log("Change White");
+                            spriteRenderer.color = Color.white;
+                        }
+
+                        lastBlinkTime = Time.time;
+                    }
+                }
+                else
+                {
+                    invincible = false;
+                    spriteRenderer.color = Color.white;
+
+                    int playerMask = LayerMask.NameToLayer("Player");
+                    Physics2D.SetLayerCollisionMask(playerMask, LayerMask.GetMask(new string[] { "Stage", "Enemy" }) );
+                }
+            }
+
             bool isOnGround = CheckGroundAndEnemy();
             bool isHurt = CheckHurt();
 
             if(isHurt)
             {
-                state = MARIO_DIE;
-                body.velocity = Vector3.zero;
-                body.isKinematic = true;
-                anim.SetBool("dead", true);
-                Camera.main.GetComponent<AudioSource>().clip = dieClip;
-                Camera.main.GetComponent<AudioSource>().loop = false;
-                Camera.main.GetComponent<AudioSource>().Play();
-                Invoke("DieFall", 0.5f);
-                //AudioSource.PlayClipAtPoint(dieClip, Camera.main.transform.position);
+                if(state == MARIO_SMALL)
+                {
+                    Die();
+                }
+                else
+                {
+                    BeginChangeState(MARIO_SMALL);
+                }
             }
 
             float h = Input.GetAxis("Horizontal");
@@ -74,7 +178,10 @@ public class Mario : MonoBehaviour
 
             Vector3 force = Vector3.right * h;
 
-            body.AddForce(force * movePower);
+            if(Time.timeScale > 0)
+            {
+                body.AddForce(force * movePower);
+            }
 
             if (isOnGround)
             {
@@ -120,9 +227,18 @@ public class Mario : MonoBehaviour
 
             anim.SetBool("grounded", isOnGround);
         }
-        else
-        {
-        }
+    }
+
+    private void Die()
+    {
+        state = MARIO_DIE;
+        body.velocity = Vector3.zero;
+        body.isKinematic = true;
+        anim.SetBool("dead", true);
+        Camera.main.GetComponent<AudioSource>().clip = dieClip;
+        Camera.main.GetComponent<AudioSource>().loop = false;
+        Camera.main.GetComponent<AudioSource>().Play();
+        Invoke("DieFall", 0.5f);
     }
 
     bool ShouldBreak(float speed, float accerlation)
@@ -143,7 +259,7 @@ public class Mario : MonoBehaviour
         body.gravityScale = 5;
 
         Transform[] hitTrans;
-        bool result = ThreeLineCast(transform.position, Vector3.right * 0.4f, Vector2.down, 0.55f, out hitTrans);
+        bool result = ThreeLineCast(col.bounds.center, Vector2.right * col.bounds.extents.x * 1.05f, Vector2.down, col.bounds.extents.y * 1.05f, out hitTrans);
 
         if(result)
         {
@@ -188,13 +304,16 @@ public class Mario : MonoBehaviour
 
     bool CheckHurt()
     {
-        bool rightHurt = CheckHurt(Vector3.up * 0.55f, Vector3.right, 0.4f);
-        bool leftHurt = CheckHurt(Vector3.up * 0.55f, Vector3.left, 0.4f);
-        bool topHurt = CheckHurt(Vector3.right * 0.4f, Vector3.up, 0.55f);
+        if (invincible)
+        {
+            return false;
+        }
 
-        return topHurt;
+        bool rightHurt = CheckHurt(Vector3.up * col.bounds.extents.y * 1.05f, Vector3.right, col.bounds.extents.x * 1.05f);
+        bool leftHurt = CheckHurt(Vector3.up * col.bounds.extents.y * 1.05f, Vector3.left, col.bounds.extents.x * 1.05f);
+        bool topHurt = CheckHurt(Vector3.right * col.bounds.extents.x * 1.05f, Vector3.up, col.bounds.extents.y * 1.05f);
 
-        //return rightHurt || leftHurt || topHurt;
+        return rightHurt || leftHurt || topHurt;
     }
 
     bool CheckHurt(Vector3 offset, Vector3 direction, float distance)
@@ -202,7 +321,7 @@ public class Mario : MonoBehaviour
         Transform[] hitTrans;
         bool hurtResult = false;
 
-        bool lineCastResult = ThreeLineCast(transform.position, offset, direction, distance, out hitTrans);
+        bool lineCastResult = ThreeLineCast(col.bounds.center, offset, direction, distance, out hitTrans);
 
         if (lineCastResult)
         {
@@ -222,6 +341,99 @@ public class Mario : MonoBehaviour
             }
         }
         return hurtResult;
+    }
+
+    void BeginChangeState(int newState)
+    {
+        anim.enabled = false;
+
+        changeStateBeginTime = Time.unscaledTime;
+
+        oldSprite = spriteRenderer.sprite;
+        state = newState;
+
+        string[] spriteNameSplit = oldSprite.name.Split('_');
+        string spriteNumberString = spriteNameSplit[spriteNameSplit.Length - 1];
+        spriteIndex = int.Parse(spriteNumberString);
+
+        Debug.Log("Sprite编号：" + spriteIndex);
+
+        isChangingState = true;
+
+        if(newState == MARIO_SMALL)
+        {
+            int playerMask = LayerMask.NameToLayer("Player");
+            Physics2D.SetLayerCollisionMask(playerMask, LayerMask.GetMask(new string[] { "Stage" }));
+
+            invincible = true;
+            invincibleBeginTime = Time.unscaledTime;
+            AudioSource.PlayClipAtPoint(pipeClip, Camera.main.transform.position);
+        }
+        else
+        {
+            AudioSource.PlayClipAtPoint(powerupClip, Camera.main.transform.position);
+            Debug.Log("Powerup");
+        }
+
+        Time.timeScale = 0;
+    }
+
+    void ChangeState(int newState)
+    {
+        Time.timeScale = 1;
+        isChangingState = false;
+
+        anim.enabled = true;
+
+        float height = 1;
+
+        switch(newState)
+        {
+            case MARIO_SMALL:
+                height = 1;
+                break;
+            case MARIO_BIG:
+                height = 2;
+                break;
+            case MARIO_FIRE:
+                height = 2;
+                break;
+            default:
+                break;
+        }
+
+        spriteRenderer.color = Color.white;
+
+        (col as BoxCollider2D).size = new Vector2((col as BoxCollider2D).size.x, height);
+        (col as BoxCollider2D).offset = new Vector2(0, height / 2);
+
+        anim.runtimeAnimatorController = marioControllers[newState];
+    }
+
+    public void Pause()
+    {
+
+    }
+
+    void ChangeSprite(int state, int index)
+    {
+        Sprite[] sprites = mario_s;
+
+        if(state == MARIO_BIG)
+        {
+            Debug.Log("BIG");
+            sprites = mario_b;
+        }
+
+        if(state == MARIO_FIRE)
+        {
+            Debug.Log("FIRE");
+            sprites = mario_f;
+        }
+
+        spriteRenderer.color = new Color(1, 1, 1, 0.75f);
+        spriteRenderer.sprite = sprites[index];
+        Debug.Log("new sprite:" + spriteRenderer.sprite.name);
     }
 
     void Rebound()
