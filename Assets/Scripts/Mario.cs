@@ -36,6 +36,9 @@ public class Mario : MonoBehaviour
     private Rigidbody2D body;
     private Collider2D col;
 
+    private Transform shotPos;
+    private GameObject bulletPrefab;
+
     public Sprite[] mario_s;
     public Sprite[] mario_b;
     public Sprite[] mario_f;
@@ -60,6 +63,9 @@ public class Mario : MonoBehaviour
 
         anim = GetComponent<Animator>();
 
+        shotPos = transform.Find("ShotPos");
+        bulletPrefab = Resources.Load<GameObject>("Prefabs/Mario_Bullet");
+
         powerupClip = Resources.Load<AudioClip>("Sounds/smb_powerup");
         pipeClip = Resources.Load<AudioClip>("Sounds/smb_pipe");
         dieClip = Resources.Load<AudioClip>("Sounds/smb_mariodie");
@@ -80,6 +86,11 @@ public class Mario : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.Alpha2))
                 {
                     BeginChangeState(MARIO_BIG);
+                }
+
+                if (Input.GetKeyDown(KeyCode.Alpha3))
+                {
+                    BeginChangeState(MARIO_FIRE);
                 }
             }
 
@@ -226,7 +237,27 @@ public class Mario : MonoBehaviour
             }
 
             anim.SetBool("grounded", isOnGround);
+
+            if(state == MARIO_FIRE)
+            {
+                if(Input.GetKeyDown(KeyCode.J))
+                {
+                    Shoot();
+                }
+            }
         }
+    }
+
+    private void Shoot()
+    {
+        Instantiate(bulletPrefab, shotPos.position, shotPos.rotation);
+        anim.runtimeAnimatorController = marioControllers[3];
+        Invoke("ResetFireAnimatorController", 0.1f);
+    }
+
+    private void ResetFireAnimatorController()
+    {
+        anim.runtimeAnimatorController = marioControllers[MARIO_FIRE];
     }
 
     private void Die()
@@ -271,7 +302,7 @@ public class Mario : MonoBehaviour
 
                     if (enemy)
                     {
-                        enemy.OnHit();
+                        enemy.OnStomp();
                         Invoke("Rebound", 0.015f);
                     }
                 }
@@ -345,6 +376,8 @@ public class Mario : MonoBehaviour
 
     void BeginChangeState(int newState)
     {
+        CancelInvoke("ResetFireAnimatorController");
+
         anim.enabled = false;
 
         changeStateBeginTime = Time.unscaledTime;
