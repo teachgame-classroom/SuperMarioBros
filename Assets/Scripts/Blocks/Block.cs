@@ -30,6 +30,8 @@ public class Block : MonoBehaviour
 
     protected virtual void OnCollisionEnter2D(Collision2D collision)
     {
+        Debug.Log("Hit");
+
         for(int i = 0; i < collision.contacts.Length; i++)
         {
             Color lineColor = Color.red;

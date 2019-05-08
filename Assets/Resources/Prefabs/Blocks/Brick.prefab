@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 7713243435186510521}
   - component: {fileID: 4768041609844839003}
   - component: {fileID: 4698219004413855175}
-  - component: {fileID: 5387937850133436516}
-  m_Layer: 0
+  - component: {fileID: 8139661716086834340}
+  m_Layer: 10
   m_Name: Brick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44,7 +44,7 @@ Animator:
   m_GameObject: {fileID: 1310426203734724397}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 54931bbe02817aa419b7012acd8c024d, type: 2}
+  m_Controller: {fileID: 9100000, guid: 660d7ba931164594b979310e065397db, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -74,7 +74,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &5387937850133436516
+--- !u!114 &8139661716086834340
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -83,11 +83,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1310426203734724397}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 875b1d6ced4653d4db2892c409bd6ec4, type: 3}
+  m_Script: {fileID: 11500000, guid: f449db6fa41148649aa08cb839f973bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitSound: {fileID: 8300000, guid: cdf981c2270270746984f9237b04c250, type: 3}
-  emptySound: {fileID: 8300000, guid: d3d0644e52e823343a2e8ef11b055bab, type: 3}
 --- !u!1 &5158503598126425977
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,7 +97,7 @@ GameObject:
   - component: {fileID: 7971477361130820388}
   - component: {fileID: 3412747865225229095}
   - component: {fileID: 8932417741120201397}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Child
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,7 +155,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: cce8d231254c6f24e82456b8ad17c94b, type: 3}
+  m_Sprite: {fileID: 21300008, guid: cce8d231254c6f24e82456b8ad17c94b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -181,10 +179,10 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.5, y: 0.5}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0, y: 0}
     oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
