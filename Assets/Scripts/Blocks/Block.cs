@@ -46,6 +46,9 @@ public class Block : MonoBehaviour
             if (collision.contacts[0].normal.y > 0)
             {
                 OnHit(collision.gameObject);
+
+                // 有多个碰撞接触点时，只调用一次命中处理，防止顶一次触发多次顶取
+                return;
             }
         }
     }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 694423771404950453}
   - component: {fileID: 2192788570968577069}
   - component: {fileID: 602084461428530171}
-  - component: {fileID: 4415135533238375556}
+  - component: {fileID: 2441802326607308222}
   m_Layer: 10
   m_Name: Treasure
   m_TagString: Untagged
@@ -65,9 +65,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 875b1d6ced4653d4db2892c409bd6ec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitSound: {fileID: 8300000, guid: cdf981c2270270746984f9237b04c250, type: 3}
+  itemType: 0
   emptySound: {fileID: 8300000, guid: d3d0644e52e823343a2e8ef11b055bab, type: 3}
---- !u!50 &4415135533238375556
+  hitCount: 3
+--- !u!50 &2441802326607308222
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0

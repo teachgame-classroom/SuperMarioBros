@@ -441,6 +441,8 @@ public class Mario : MonoBehaviour
         (col as BoxCollider2D).offset = new Vector2(0, height / 2);
 
         anim.runtimeAnimatorController = marioControllers[newState];
+
+        Treasure.OnMarioStateChange(newState);
     }
 
     public void Pause()
@@ -480,5 +482,37 @@ public class Mario : MonoBehaviour
         body.velocity = Vector2.up * 20;
         body.gravityScale = 2.5f;
         GetComponent<Collider2D>().enabled = false;
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        TryPickupItem(collision.gameObject);
+    }
+
+    void TryPickupItem(GameObject itemObject)
+    {
+        ItemMarker itemMarker = itemObject.GetComponent<ItemMarker>();
+
+        if(itemMarker)
+        {
+            PickupItem(itemMarker.itemType);
+            Destroy(itemObject);
+        }
+    }
+
+    void PickupItem(ItemType itemType)
+    {
+        switch (itemType)
+        {
+            case ItemType.Mushroom_Red:
+                BeginChangeState(MARIO_BIG);
+                break;
+            case ItemType.Flower:
+                if(state == MARIO_SMALL) BeginChangeState(MARIO_BIG);
+                else BeginChangeState(MARIO_FIRE);
+                break;
+            default:
+                break;
+        }
     }
 }
