@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Stage
+  - Goal
+  - Gate
   layers:
   - Default
   - TransparentFX

@@ -47,6 +47,9 @@ TextureImporter:
     21300084: Mario_F_A_1
     21300086: Mario_F_A_2
     21300088: Mario_F_A_3
+    21300090: Mario_B_7
+    21300092: Mario_7
+    21300094: Mario_F_7
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -917,6 +920,66 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: 18db52232c266e24bba01df4b97dc3fa
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mario_B_7
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 654
+        width: 16
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a4143e57e5e39864c8c6fab0c7775831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mario_7
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 637
+        width: 16
+        height: 16
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9f8221b314e470f44bdf0b7ac369447b
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mario_F_7
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 526
+        width: 16
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f07bb0e339bcf94d8e8eebb5db26b05
       vertices: []
       indices: 
       edges: []

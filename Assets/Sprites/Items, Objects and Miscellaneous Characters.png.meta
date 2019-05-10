@@ -23,6 +23,8 @@ TextureImporter:
     21300036: Flower_1
     21300038: Flower_2
     21300040: Flower_3
+    21300042: Goal_Flag
+    21300044: Castle_Flag
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -553,6 +555,46 @@ TextureImporter:
       tessellationDetail: 0
       bones: []
       spriteID: cb49f14ffa4d20747b65ef5ea61c3525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Goal_Flag
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 288
+        width: 16
+        height: 16
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d403836d81e15ec4998aeffc7c84f768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Castle_Flag
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 319
+        width: 16
+        height: 16
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b87614ba4857464da76c057a0d40d69
       vertices: []
       indices: 
       edges: []

@@ -25,6 +25,10 @@ public class Mario : MonoBehaviour
     private bool isOnGround;
     private bool isJumpingUp;
     private bool isChangingState;
+    private bool hasReachedGoal;
+    private bool goingToCastle;
+
+    private Vector3 flagBottomPos;
 
     private float invincibleTime = 5f;
     private float invincibleBeginTime;
@@ -76,176 +80,203 @@ public class Mario : MonoBehaviour
     {
         if(state != MARIO_DIE)
         {
-            if(!isChangingState)
+            if (hasReachedGoal)
             {
-                if (Input.GetKeyDown(KeyCode.Alpha1))
+                if(!goingToCastle)
                 {
-                    BeginChangeState(MARIO_SMALL);
-                }
-
-                if (Input.GetKeyDown(KeyCode.Alpha2))
-                {
-                    BeginChangeState(MARIO_BIG);
-                }
-
-                if (Input.GetKeyDown(KeyCode.Alpha3))
-                {
-                    BeginChangeState(MARIO_FIRE);
-                }
-            }
-
-            if (isChangingState)
-            {
-                if(Time.unscaledTime - changeStateBeginTime < changeStatePauseTime)
-                {
-                    if (Time.unscaledTime - lastBlinkTime > blinkInterval)
-                    {
-                        //Debug.Log("Last Blink Time:" + lastBlinkTime);
-                        if (spriteRenderer.sprite == oldSprite)
-                        {
-                            Debug.Log("change to new");
-                            ChangeSprite(state, spriteIndex);
-                        }
-                        else
-                        {
-                            Debug.Log("change to old");
-                            spriteRenderer.sprite = oldSprite;
-                        }
-
-                        lastBlinkTime = Time.unscaledTime;
-                    }
-
-                    return;
+                    transform.position = Vector3.MoveTowards(transform.position, flagBottomPos, Time.deltaTime * 6);
                 }
                 else
                 {
-                    ChangeState(state);
-                }
-            }
-
-            if(invincible)
-            {
-                Debug.Log("Invincible");
-                if(Time.unscaledTime - invincibleBeginTime < invincibleTime)
-                {
-                    Debug.Log("Time.time:" + Time.time + ",lastBlinkTime:" + lastBlinkTime);
-
-                    if (Time.unscaledTime - lastBlinkTime > blinkInterval * 3)
-                    {
-                        Debug.Log("BlinkTime");
-
-                        if (spriteRenderer.color == Color.white)
-                        {
-                            Debug.Log("Change Clean");
-                            spriteRenderer.color = new Color(1, 1, 1, 0.5f);
-                        }
-                        else
-                        {
-                            Debug.Log("Change White");
-                            spriteRenderer.color = Color.white;
-                        }
-
-                        lastBlinkTime = Time.time;
-                    }
-                }
-                else
-                {
-                    invincible = false;
-                    spriteRenderer.color = Color.white;
-
-                    int playerMask = LayerMask.NameToLayer("Player");
-                    Physics2D.SetLayerCollisionMask(playerMask, LayerMask.GetMask(new string[] { "Stage", "Enemy" }) );
-                }
-            }
-
-            bool isOnGround = CheckGroundAndEnemy();
-            bool isHurt = CheckHurt();
-
-            if(isHurt)
-            {
-                if(state == MARIO_SMALL)
-                {
-                    Die();
-                }
-                else
-                {
-                    BeginChangeState(MARIO_SMALL);
-                }
-            }
-
-            float h = Input.GetAxis("Horizontal");
-            float v = Input.GetAxis("Vertical");
-            //Debug.Log("左右方向轴：" + h);
-            //Debug.Log("上下方向轴：" + v);
-
-            if (h > 0)
-            {
-                transform.rotation = Quaternion.identity;
-            }
-            else if (h < 0)
-            {
-                transform.rotation = Quaternion.Euler(0, 180, 0);
-            }
-
-            Vector3 force = Vector3.right * h;
-
-            if(Time.timeScale > 0)
-            {
-                body.AddForce(force * movePower);
-            }
-
-            if (isOnGround)
-            {
-                float speed = body.velocity.magnitude;
-
-                anim.SetFloat("speed", speed);
-
-                if (ShouldBreak(body.velocity.x, h))
-                {
-                    if (!isBreaking)
-                    {
-                        Debug.Log("Break");
-                        isBreaking = true;
-                        anim.ResetTrigger("break");
-                        anim.SetTrigger("break");
-                    }
-                }
-
-                if (Input.GetKeyDown(KeyCode.K))
-                {
-                    body.AddForce(Vector3.up * jumpMaxPower, ForceMode2D.Impulse);
-                    Debug.Log("Jump Up Speed:" + body.velocity.magnitude);
-                    isJumpingUp = true;
-                    //jumpTimer.Start();
+                    body.AddForce(Vector3.right * movePower);
                 }
             }
             else
             {
-                if(body.velocity.y < 0)
+                if (!isChangingState)
                 {
-                    isJumpingUp = false;
+                    if (Input.GetKeyDown(KeyCode.Alpha1))
+                    {
+                        BeginChangeState(MARIO_SMALL);
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.Alpha2))
+                    {
+                        BeginChangeState(MARIO_BIG);
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.Alpha3))
+                    {
+                        BeginChangeState(MARIO_FIRE);
+                    }
                 }
 
-                if (Input.GetKeyUp(KeyCode.K))
+                if (isChangingState)
                 {
-                    if (isJumpingUp)
+                    if (Time.unscaledTime - changeStateBeginTime < changeStatePauseTime)
+                    {
+                        if (Time.unscaledTime - lastBlinkTime > blinkInterval)
+                        {
+                            //Debug.Log("Last Blink Time:" + lastBlinkTime);
+                            if (spriteRenderer.sprite == oldSprite)
+                            {
+                                Debug.Log("change to new");
+                                ChangeSprite(state, spriteIndex);
+                            }
+                            else
+                            {
+                                Debug.Log("change to old");
+                                spriteRenderer.sprite = oldSprite;
+                            }
+
+                            lastBlinkTime = Time.unscaledTime;
+                        }
+
+                        return;
+                    }
+                    else
+                    {
+                        ChangeState(state);
+                    }
+                }
+
+                if (invincible)
+                {
+                    Debug.Log("Invincible");
+                    if (Time.unscaledTime - invincibleBeginTime < invincibleTime)
+                    {
+                        Debug.Log("Time.time:" + Time.time + ",lastBlinkTime:" + lastBlinkTime);
+
+                        if (Time.unscaledTime - lastBlinkTime > blinkInterval * 3)
+                        {
+                            Debug.Log("BlinkTime");
+
+                            if (spriteRenderer.color == Color.white)
+                            {
+                                Debug.Log("Change Clean");
+                                spriteRenderer.color = new Color(1, 1, 1, 0.5f);
+                            }
+                            else
+                            {
+                                Debug.Log("Change White");
+                                spriteRenderer.color = Color.white;
+                            }
+
+                            lastBlinkTime = Time.time;
+                        }
+                    }
+                    else
+                    {
+                        invincible = false;
+                        spriteRenderer.color = Color.white;
+
+                        int playerMask = LayerMask.NameToLayer("Player");
+                        Physics2D.SetLayerCollisionMask(playerMask, LayerMask.GetMask(new string[] { "Stage", "Enemy" }));
+                    }
+                }
+
+                bool isOnGround = CheckGroundAndEnemy();
+                bool isHurt = CheckHurt();
+
+                if (isHurt)
+                {
+                    if (state == MARIO_SMALL)
+                    {
+                        Die();
+                    }
+                    else
+                    {
+                        BeginChangeState(MARIO_SMALL);
+                    }
+                }
+
+                float h = Input.GetAxis("Horizontal");
+                float v = Input.GetAxis("Vertical");
+                //Debug.Log("左右方向轴：" + h);
+                //Debug.Log("上下方向轴：" + v);
+
+                if (h > 0)
+                {
+                    transform.rotation = Quaternion.identity;
+                }
+                else if (h < 0)
+                {
+                    transform.rotation = Quaternion.Euler(0, 180, 0);
+                }
+
+                Vector3 force = Vector3.right * h;
+
+                if (Time.timeScale > 0)
+                {
+                    body.AddForce(force * movePower);
+                }
+
+                if (isOnGround)
+                {
+                    float speed = body.velocity.magnitude;
+
+                    anim.SetFloat("speed", speed);
+
+                    if (ShouldBreak(body.velocity.x, h))
+                    {
+                        if (!isBreaking)
+                        {
+                            Debug.Log("Break");
+                            isBreaking = true;
+                            anim.ResetTrigger("break");
+                            anim.SetTrigger("break");
+                        }
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.K))
+                    {
+                        body.AddForce(Vector3.up * jumpMaxPower, ForceMode2D.Impulse);
+                        Debug.Log("Jump Up Speed:" + body.velocity.magnitude);
+                        isJumpingUp = true;
+                        //jumpTimer.Start();
+                    }
+                }
+                else
+                {
+                    if (body.velocity.y < 0)
                     {
                         isJumpingUp = false;
-                        body.velocity = new Vector2(body.velocity.x, Mathf.Min(body.velocity.y, 10));
+                    }
+
+                    if (Input.GetKeyUp(KeyCode.K))
+                    {
+                        if (isJumpingUp)
+                        {
+                            isJumpingUp = false;
+                            body.velocity = new Vector2(body.velocity.x, Mathf.Min(body.velocity.y, 10));
+                        }
+                    }
+                }
+
+                anim.SetBool("grounded", isOnGround);
+
+                if (state == MARIO_FIRE)
+                {
+                    if (Input.GetKeyDown(KeyCode.J))
+                    {
+                        Shoot();
                     }
                 }
             }
-
-            anim.SetBool("grounded", isOnGround);
-
-            if(state == MARIO_FIRE)
-            {
-                if(Input.GetKeyDown(KeyCode.J))
-                {
-                    Shoot();
-                }
-            }
         }
+    }
+
+    private void BeginGotoCastle()
+    {
+        transform.position = Vector3.right * (int)(transform.position.x + 1) + Vector3.up * 2;
+        body.isKinematic = false;
+        body.gravityScale = 1;
+        anim.SetBool("hug", false);
+        anim.SetFloat("speed", movePower);
+        anim.SetBool("grounded", true);
+        goingToCastle = true;
+
+        ChangeBGM("Sounds/smb_stage_clear", false);
     }
 
     private void Shoot()
@@ -484,9 +515,61 @@ public class Mario : MonoBehaviour
         GetComponent<Collider2D>().enabled = false;
     }
 
+    private void ChangeBGM(string bgmPath, bool loop)
+    {
+        AudioSource bgm = Camera.main.GetComponent<AudioSource>();
+        bgm.clip = Resources.Load<AudioClip>(bgmPath);
+        bgm.loop = loop;
+        bgm.Play();
+    }
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         TryPickupItem(collision.gameObject);
+    }
+
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        if(collider.tag == "Goal")
+        {
+            Goal(collider.gameObject);
+        }
+
+        if(collider.tag == "Gate")
+        {
+            StageClear();
+        }
+    }
+
+    void Goal(GameObject goal)
+    {
+        if (hasReachedGoal)
+        {
+            return;
+        }
+        else
+        {
+            ChangeBGM("Sounds/smb_flagpole", false);
+
+            hasReachedGoal = true;
+            anim.SetBool("hug", true);
+            anim.SetFloat("speed", 0);
+            transform.position = Vector3.right * (goal.transform.position.x + 0.2f) + Vector3.up * transform.position.y;
+
+            flagBottomPos = Vector3.right * (goal.transform.position.x + 0.2f) + Vector3.up * 3;
+
+            body.velocity = Vector3.zero;
+            body.isKinematic = true;
+
+            goal.GetComponentInParent<Animator>().SetTrigger("down");
+
+            Invoke("BeginGotoCastle", 1.55f);
+        }
+    }
+
+    void StageClear()
+    {
+        gameObject.SetActive(false);
     }
 
     void TryPickupItem(GameObject itemObject)
