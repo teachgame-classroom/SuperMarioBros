@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    public static GameController instance;
+    private int totalScore;
+
+    void Awake()
+    {
+        instance = this;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -13,18 +21,12 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log("UnScale Time:" + Time.unscaledTime);
-        
-        if(Input.GetKeyDown(KeyCode.P))
-        {
-            if(Time.timeScale > 0)
-            {
-                Time.timeScale = 0;
-            }
-            else
-            {
-                Time.timeScale = 1;
-            }
-        }
+
+    }
+
+    public void AddScore(IScore s)
+    {
+        totalScore += s.score;
+        Debug.Log("Total Score:" + totalScore);
     }
 }

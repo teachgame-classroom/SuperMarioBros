@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, IScore
 {
     private Animator anim;
     private Collider2D col;
     private Rigidbody2D body;
     private AudioClip stompClip;
     private AudioClip kickClip;
+
+    private int hp = 1;
+
+    public int score { get { return 100; } }
 
     // Start is called before the first frame update
     void Start()
@@ -28,14 +32,21 @@ public class Enemy : MonoBehaviour
 
     public void OnStomp()
     {
-        anim.SetTrigger("die");
-        col.enabled = false;
-        body.isKinematic = true;
+        if(hp > 0)
+        {
+            hp--;
 
-        AudioSource.PlayClipAtPoint(stompClip, Camera.main.transform.position);
+            GameController.instance.AddScore(this);
 
-        // 延时1秒后销毁自己
-        Destroy(gameObject, 1f);
+            anim.SetTrigger("die");
+            col.enabled = false;
+            body.isKinematic = true;
+
+            AudioSource.PlayClipAtPoint(stompClip, Camera.main.transform.position);
+
+            // 延时1秒后销毁自己
+            Destroy(gameObject, 1f);
+        }
     }
 
     public void OnHit(Vector3 hitNormal)

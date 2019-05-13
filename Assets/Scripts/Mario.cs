@@ -581,6 +581,17 @@ public class Mario : MonoBehaviour
             PickupItem(itemMarker.itemType);
             Destroy(itemObject);
         }
+
+        IScore s = itemObject.GetComponent<IScore>();
+
+        if(s != null)
+        {
+            GameController.instance.AddScore(s);
+        }
+        else
+        {
+            Debug.Log("这个东西不加分");
+        }
     }
 
     void PickupItem(ItemType itemType)

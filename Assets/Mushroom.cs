@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Mushroom : MonoBehaviour
+public class Mushroom : MonoBehaviour, IScore
 {
     private Vector3 originPos;
     private Vector3 targetPos;
@@ -11,6 +11,8 @@ public class Mushroom : MonoBehaviour
     private Vector3 velocityX;
     private Vector3 velocity;
     Rigidbody2D body;
+
+    public int score { get { return 1000;  } }
 
     // Update is called once per frame
     void Start()

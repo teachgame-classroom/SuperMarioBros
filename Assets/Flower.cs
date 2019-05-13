@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Flower : MonoBehaviour
+public class Flower : MonoBehaviour, IScore
 {
     private Vector3 originPos;
     private Vector3 targetPos;
 
     private float t;
+
+    public int score { get { return 1000; } }
 
     // Update is called once per frame
     void Start()
