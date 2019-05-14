@@ -6,12 +6,17 @@ public class Activity_Direction : Activity
 {
     private Transform transform;
 
-    public Activity_Direction(MonoBehaviour owner)
+    public Activity_Direction(Actor owner) : base(owner)
     {
         transform = owner.transform;
     }
 
-    public override void Update()
+    protected override bool Evaluate()
+    {
+        return true;
+    }
+
+    protected override void DoActivity()
     {
         float h = Input.GetAxis("Horizontal");
 

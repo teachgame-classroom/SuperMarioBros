@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Castle : MonoBehaviour
+public class Castle : Actor
 {
     private GameObject fireworksPrefab;
     private AudioClip fireworksClip;

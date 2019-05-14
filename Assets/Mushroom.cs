@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Mushroom : MonoBehaviour, IScore
+public class Mushroom : Actor, IScore
 {
     private Vector3 originPos;
     private Vector3 targetPos;

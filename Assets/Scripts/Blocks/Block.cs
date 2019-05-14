@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Block : MonoBehaviour, IHealth
+public class Block : Actor, IHealth
 {
     protected Animator anim;
 

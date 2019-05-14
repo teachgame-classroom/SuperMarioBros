@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Flower : MonoBehaviour, IScore
+public class Flower : Actor, IScore
 {
     private Vector3 originPos;
     private Vector3 targetPos;

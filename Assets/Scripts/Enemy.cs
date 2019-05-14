@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour, IScore, IHealth
+public class Enemy : Actor, IScore, IHealth
 {
     private Animator anim;
     private Collider2D col;

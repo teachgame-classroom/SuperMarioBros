@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Mario : MonoBehaviour, IHealth
+public class Mario : Actor, IHealth
 {
     public const int MARIO_DIE = -1;
     public const int MARIO_SMALL = 0;
@@ -66,7 +66,7 @@ public class Mario : MonoBehaviour, IHealth
     public int currentHp { get { return _currentHp; } }
     private int _currentHp;
 
-    private List<Activity> activities = new List<Activity>();
+    //private List<Activity> activities = new List<Activity>();
 
     // Start is called before the first frame update
     void Start()
@@ -86,9 +86,13 @@ public class Mario : MonoBehaviour, IHealth
 
         _currentHp = _maxHp;
 
+        InitContainer();
 
-        activities.Add(new Activity_Move(this, movePower));
-        activities.Add(new Activity_Direction(this));
+        activities.Add<Activity_Move>();
+        activities.Add<Activity_Direction>();
+
+        //activities.Add(new Activity_Move(this, movePower));
+        //activities.Add(new Activity_Direction(this));
 
     }
 
@@ -150,10 +154,12 @@ public class Mario : MonoBehaviour, IHealth
                     Update_Hurt();
                 }
 
-                foreach (Activity act in activities)
-                {
-                    act.Update();
-                }
+                activities.Update();
+
+                //foreach (Activity act in activities)
+                //{
+                //    act.Update();
+                //}
 
                 //Update_Direction(h);
                 //Update_Move(h);
