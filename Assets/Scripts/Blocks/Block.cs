@@ -2,9 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Block : MonoBehaviour
+public class Block : MonoBehaviour, IHealth
 {
     protected Animator anim;
+
+    public int maxHp { get { return maxHitCount; } set { maxHitCount = value; } }
+    public int maxHitCount = 1;
+    
+    public int currentHp { get { return currentHitCount; } }
+    protected int currentHitCount;
 
     // Start is called before the first frame update
     void Start()
@@ -14,7 +20,9 @@ public class Block : MonoBehaviour
 
     protected virtual void OnStart()
     {
+        currentHitCount = maxHitCount;
         anim = GetComponent<Animator>();
+        //BreakBlock();
     }
 
     // Update is called once per frame
@@ -51,5 +59,30 @@ public class Block : MonoBehaviour
                 return;
             }
         }
+    }
+
+    protected virtual void BreakBlock()
+    {
+
+    }
+
+    public void ChangeHp(int amount)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Hit(int amount)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Heal(int amount)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Die()
+    {
+        BreakBlock();
     }
 }

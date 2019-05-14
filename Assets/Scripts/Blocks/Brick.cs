@@ -14,8 +14,8 @@ public class Brick : Block
 
     protected override void OnStart()
     {
-        base.OnStart();
         debrisEffect = Resources.Load<GameObject>("Prefabs/Effects/Debris_0");
+        base.OnStart();
     }
 
     // Update is called once per frame
@@ -36,11 +36,17 @@ public class Brick : Block
             }
             else
             {
-                Debug.Log("碎");
-                Instantiate(debrisEffect, transform.position, Quaternion.identity);
-                Destroy(gameObject);
+                BreakBlock();
             }
         }
+    }
+
+    protected override void BreakBlock()
+    {
+        base.BreakBlock();
+        Debug.Log("碎");
+        Instantiate(debrisEffect, transform.position, Quaternion.identity);
+        Destroy(gameObject);
     }
 
     protected override void OnCollisionEnter2D(Collision2D collision)

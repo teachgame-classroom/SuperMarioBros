@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour, IScore
+public class Enemy : MonoBehaviour, IScore, IHealth
 {
     private Animator anim;
     private Collider2D col;
@@ -10,9 +10,15 @@ public class Enemy : MonoBehaviour, IScore
     private AudioClip stompClip;
     private AudioClip kickClip;
 
-    private int hp = 1;
 
     public int score { get { return 100; } }
+
+    public int maxHp { get { return _maxHp; } set { _maxHp = value; } }
+    public int _maxHp = 1;
+
+    public int currentHp { get { return _currentHp; } }
+    private int _currentHp = 1;
+
 
     // Start is called before the first frame update
     void Start()
@@ -22,6 +28,8 @@ public class Enemy : MonoBehaviour, IScore
         body = GetComponent<Rigidbody2D>();
         stompClip = Resources.Load<AudioClip>("Sounds/smb_stomp");
         kickClip = Resources.Load<AudioClip>("Sounds/smb_kick");
+
+        _currentHp = _maxHp;
     }
 
     // Update is called once per frame
@@ -32,21 +40,14 @@ public class Enemy : MonoBehaviour, IScore
 
     public void OnStomp()
     {
-        if(hp > 0)
-        {
-            hp--;
+        anim.SetTrigger("die");
+        col.enabled = false;
+        body.isKinematic = true;
 
-            GameController.instance.AddScore(this);
+        AudioSource.PlayClipAtPoint(stompClip, Camera.main.transform.position);
 
-            anim.SetTrigger("die");
-            col.enabled = false;
-            body.isKinematic = true;
-
-            AudioSource.PlayClipAtPoint(stompClip, Camera.main.transform.position);
-
-            // 延时1秒后销毁自己
-            Destroy(gameObject, 1f);
-        }
+        // 延时1秒后销毁自己
+        Destroy(gameObject, 1f);
     }
 
     public void OnHit(Vector3 hitNormal)
@@ -71,5 +72,41 @@ public class Enemy : MonoBehaviour, IScore
 
         // 延时1秒后销毁自己
         Destroy(gameObject, 3f);
+    }
+
+    public void ChangeHp(int amount)
+    {
+        _currentHp = Mathf.Clamp(amount, 0, _maxHp);
+
+        if (_currentHp == 0)
+        {
+            OnStomp();
+        }
+    }
+
+    public void Hit(int amount)
+    {
+        _currentHp = Mathf.Clamp(_currentHp - amount, 0, _maxHp);
+
+        if (_currentHp == 0)
+        {
+            OnStomp();
+        }
+    }
+
+    public void Heal(int amount)
+    {
+        _currentHp = Mathf.Clamp(_currentHp + amount, 0, _maxHp);
+    }
+
+    public void Die()
+    {
+        Debug.Log("Enemy Die");
+        if (_currentHp > 0)
+        {
+            _currentHp = 0;
+            GameController.instance.AddScore(this);
+            OnStomp();
+        }
     }
 }

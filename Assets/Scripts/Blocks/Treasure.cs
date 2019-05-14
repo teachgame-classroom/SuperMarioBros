@@ -9,7 +9,6 @@ public class Treasure : Block
     public AudioClip emptySound;
     private AudioClip hitSound;
 
-    public int hitCount = 1;
 
     private GameObject itemInstance;
 
@@ -58,8 +57,6 @@ public class Treasure : Block
 
     protected override void OnStart()
     {
-        base.OnStart();
-
         if(itemType == ItemType.Coin)
         {
             hitSound = Resources.Load<AudioClip>("Sounds/smb_coin");
@@ -73,11 +70,13 @@ public class Treasure : Block
 
         // 每个宝箱在生成的时候，将自己加入静态列表
         treasures.Add(this);
+
+        base.OnStart();
     }
 
     protected override void OnHit(GameObject gameObject)
     {
-        if (hitCount <= 0)  // 金币已经顶空的时候，不播动画，只播顶空声音
+        if (currentHitCount <= 0)  // 金币已经顶空的时候，不播动画，只播顶空声音
         {
             AudioSource.PlayClipAtPoint(emptySound, Camera.main.transform.position);
         }
@@ -94,10 +93,10 @@ public class Treasure : Block
             }
 
             // 扣掉金币计数
-            hitCount--;
+            currentHitCount--;
 
             // 扣掉以后的剩余金币为0的时候，将动画状态机的empty变量设为true，播放顶空动画，否则播放普通顶中动画
-            if (hitCount <= 0)
+            if (currentHitCount <= 0)
             {
                 anim.SetBool("empty", true);
             }
@@ -110,6 +109,33 @@ public class Treasure : Block
     private void SpawnItem()
     {
         Instantiate(itemInstance, transform.position, Quaternion.identity);
+    }
+
+    protected override void BreakBlock()
+    {
+        base.BreakBlock();
+        // 如果生成的不是金币，就延时0.5秒再生成
+        if (itemType == ItemType.Coin)
+        {
+            SpawnItem();
+        }
+        else
+        {
+            Invoke("SpawnItem", 0.5f);
+        }
+
+        // 扣掉金币计数
+        currentHitCount--;
+
+        // 扣掉以后的剩余金币为0的时候，将动画状态机的empty变量设为true，播放顶空动画，否则播放普通顶中动画
+        if (currentHitCount <= 0)
+        {
+            anim.SetBool("empty", true);
+        }
+
+        AudioSource.PlayClipAtPoint(hitSound, Camera.main.transform.position);
+        anim.SetTrigger("hit");
+
     }
 
     protected override void OnCollisionEnter2D(Collision2D collision)
