@@ -1,15 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-public class Mario : MonoBehaviour, IHealth
+public class Mario : Actor, IHealth
 {
-    public const int MARIO_DIE = -1;
-    public const int MARIO_SMALL = 0;
-    public const int MARIO_BIG = 1;
-    public const int MARIO_FIRE = 2;
-
-    public int state = MARIO_SMALL;
+    public int state = AppConst.MARIO_SMALL;
 
     [Range(0,20)]
     public float movePower = 10;
@@ -64,9 +60,10 @@ public class Mario : MonoBehaviour, IHealth
     public int _maxHp;
 
     public int currentHp { get { return _currentHp; } }
+
     private int _currentHp;
 
-    private List<Activity> activities = new List<Activity>();
+    private List<Activity> actList = new List<Activity>();
 
     // Start is called before the first frame update
     void Start()
@@ -86,15 +83,29 @@ public class Mario : MonoBehaviour, IHealth
 
         _currentHp = _maxHp;
 
+        InitActivityContainer();
 
-        activities.Add(new Activity_Move(this, movePower));
-        activities.Add(new Activity_Direction(this));
+        //actList.Add(new Activity_Move(this, movePower));
+        //actList.Add(new Activity_Direction(this));
 
+    }
+
+    private void InitActivityContainer()
+    {
+        _activities.Add(typeof(Activity_Input), new Activity_Input(this));
+        _activities.Add(typeof(Activity_Move), new Activity_Move(this, 20));
+        _activities.Add(typeof(Activity_Direction), new Activity_Direction(this));
+        _activities.Add(typeof(Activity_StateManagement), new Activity_StateManagement(this, AppConst.MARIO_SMALL));
     }
 
     // Update is called once per frame
     void Update()
     {
+        foreach (Activity act in _activities.Values)
+        {
+            act.Update();
+        }
+
         float h;
         float v;
 
@@ -104,7 +115,7 @@ public class Mario : MonoBehaviour, IHealth
         Update_Input(out h, out v, out jumpButton, out fireButton);
 
         // 马里奥生存
-        if (state != MARIO_DIE)
+        if (state != AppConst.MARIO_DIE)
         {
             // 到达旗帜
             if (hasReachedGoal)
@@ -132,7 +143,7 @@ public class Mario : MonoBehaviour, IHealth
                 // 处于变身暂停状态
                 if (isChangingState)
                 {
-                    Update_ChangeState();
+                    //Update_ChangeState();
                 }
 
                 // 处于无敌状态
@@ -150,11 +161,6 @@ public class Mario : MonoBehaviour, IHealth
                     Update_Hurt();
                 }
 
-                foreach (Activity act in activities)
-                {
-                    act.Update();
-                }
-
                 //Update_Direction(h);
                 //Update_Move(h);
 
@@ -167,7 +173,7 @@ public class Mario : MonoBehaviour, IHealth
                     Update_Air();
                 }
 
-                if (state == MARIO_FIRE)
+                if (state == AppConst.MARIO_FIRE)
                 {
                     if (fireButton)
                     {
@@ -250,13 +256,13 @@ public class Mario : MonoBehaviour, IHealth
 
     private void Update_Hurt()
     {
-        if (state == MARIO_SMALL)
+        if (state == AppConst.MARIO_SMALL)
         {
             Die();
         }
         else
         {
-            BeginChangeState(MARIO_SMALL);
+            BeginChangeState(AppConst.MARIO_SMALL);
         }
     }
 
@@ -264,17 +270,17 @@ public class Mario : MonoBehaviour, IHealth
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            BeginChangeState(MARIO_SMALL);
+            BeginChangeState(AppConst.MARIO_SMALL);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            BeginChangeState(MARIO_BIG);
+            BeginChangeState(AppConst.MARIO_BIG);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            BeginChangeState(MARIO_FIRE);
+            BeginChangeState(AppConst.MARIO_FIRE);
         }
     }
 
@@ -364,7 +370,7 @@ public class Mario : MonoBehaviour, IHealth
 
     private void ResetFireAnimatorController()
     {
-        anim.runtimeAnimatorController = marioControllers[MARIO_FIRE];
+        anim.runtimeAnimatorController = marioControllers[AppConst.MARIO_FIRE];
     }
 
 
@@ -489,7 +495,7 @@ public class Mario : MonoBehaviour, IHealth
 
         isChangingState = true;
 
-        if(newState == MARIO_SMALL)
+        if(newState == AppConst.MARIO_SMALL)
         {
             int playerMask = LayerMask.NameToLayer("Player");
             Physics2D.SetLayerCollisionMask(playerMask, LayerMask.GetMask(new string[] { "Stage" }));
@@ -518,13 +524,13 @@ public class Mario : MonoBehaviour, IHealth
 
         switch(newState)
         {
-            case MARIO_SMALL:
+            case AppConst.MARIO_SMALL:
                 height = 1;
                 break;
-            case MARIO_BIG:
+            case AppConst.MARIO_BIG:
                 height = 2;
                 break;
-            case MARIO_FIRE:
+            case AppConst.MARIO_FIRE:
                 height = 2;
                 break;
             default:
@@ -550,13 +556,13 @@ public class Mario : MonoBehaviour, IHealth
     {
         Sprite[] sprites = mario_s;
 
-        if(state == MARIO_BIG)
+        if(state == AppConst.MARIO_BIG)
         {
             Debug.Log("BIG");
             sprites = mario_b;
         }
 
-        if(state == MARIO_FIRE)
+        if(state == AppConst.MARIO_FIRE)
         {
             Debug.Log("FIRE");
             sprites = mario_f;
@@ -664,11 +670,11 @@ public class Mario : MonoBehaviour, IHealth
         switch (itemType)
         {
             case ItemType.Mushroom_Red:
-                BeginChangeState(MARIO_BIG);
+                BeginChangeState(AppConst.MARIO_BIG);
                 break;
             case ItemType.Flower:
-                if(state == MARIO_SMALL) BeginChangeState(MARIO_BIG);
-                else BeginChangeState(MARIO_FIRE);
+                if(state == AppConst.MARIO_SMALL) BeginChangeState(AppConst.MARIO_BIG);
+                else BeginChangeState(AppConst.MARIO_FIRE);
                 break;
             default:
                 break;
@@ -702,7 +708,7 @@ public class Mario : MonoBehaviour, IHealth
 
     public void Die()
     {
-        state = MARIO_DIE;
+        state = AppConst.MARIO_DIE;
         body.velocity = Vector3.zero;
         body.isKinematic = true;
         anim.SetBool("dead", true);

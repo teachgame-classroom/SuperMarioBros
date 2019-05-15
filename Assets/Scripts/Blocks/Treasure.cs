@@ -145,13 +145,13 @@ public class Treasure : Block
 
     private void ChangeItemByMarioState(int newState)
     {
-        if(itemType == ItemType.Flower && newState == Mario.MARIO_SMALL)
+        if(itemType == ItemType.Flower && newState == AppConst.MARIO_SMALL)
         {
             itemType = ItemType.Mushroom_Red;
             LoadItemPrefab(itemType);
         }
 
-        if (itemType == ItemType.Mushroom_Red && (newState == Mario.MARIO_BIG || newState == Mario.MARIO_FIRE) )
+        if (itemType == ItemType.Mushroom_Red && (newState == AppConst.MARIO_BIG || newState == AppConst.MARIO_FIRE) )
         {
             itemType = ItemType.Flower;
             LoadItemPrefab(itemType);
