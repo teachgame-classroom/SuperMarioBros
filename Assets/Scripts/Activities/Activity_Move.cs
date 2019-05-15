@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Activity_Move : Activity
 {
-    private float movePower = 10;
+    private float movePower = 20;
     private Rigidbody2D body;
 
     public Activity_Move(Actor owner): base(owner)

@@ -26,7 +26,7 @@ public class ActivityContainer
         }
         else
         {
-            activityDict.Add(t, (Activity)t.MakeGenericType(t).GetConstructor(type).Invoke(parameter));
+            activityDict.Add(t, (Activity)t.GetConstructor(type).Invoke(parameter));
             return true;
         }
     }
