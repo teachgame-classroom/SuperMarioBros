@@ -14,12 +14,8 @@ public class Activity_StateManagement : Activity
     private SpriteRenderer spriteRenderer;
     private RuntimeAnimatorController[] marioControllers;
 
-    private float changeStateBeginTime;
     private Sprite oldSprite;
-
     private int spriteIndex;
-
-    private bool isChangingState;
 
     private bool invincible;
     private float invincibleBeginTime;
@@ -27,7 +23,8 @@ public class Activity_StateManagement : Activity
     private float changeStatePauseTime = 1f;
     private float blinkInterval = 0.05f;
 
-    private float lastBlinkTime;
+    private int pauseTimerHandler;
+    private int blinkTimerHandler;
 
     private AudioClip pipeClip;
     private AudioClip powerupClip;
@@ -55,53 +52,20 @@ public class Activity_StateManagement : Activity
         mario_b = ((Mario)owner).mario_b;
         mario_f = ((Mario)owner).mario_f;
         marioControllers = ((Mario)owner).marioControllers;
-    }
 
+        input.onButtonDown_Test1 += () => { BeginChangeState(AppConst.MARIO_SMALL); };
+        input.onButtonDown_Test2 += () => { BeginChangeState(AppConst.MARIO_BIG); };
+        input.onButtonDown_Test3 += () => { BeginChangeState(AppConst.MARIO_FIRE); };
+        input.onButtonDown_Test4 += () => { Die(); };
+    }
 
     public override void Update()
     {
-        if (input.test1) BeginChangeState(AppConst.MARIO_SMALL);
-        if (input.test2) BeginChangeState(AppConst.MARIO_BIG);
-        if (input.test3) BeginChangeState(AppConst.MARIO_FIRE);
-        if (input.test4) Die();
-
-        if (isChangingState)
-        {
-            if (Time.unscaledTime - changeStateBeginTime < changeStatePauseTime)
-            {
-                if (Time.unscaledTime - lastBlinkTime > blinkInterval)
-                {
-                    //Debug.Log("Last Blink Time:" + lastBlinkTime);
-                    if (spriteRenderer.sprite == oldSprite)
-                    {
-                        Debug.Log("change to new");
-                        ChangeSprite(state, spriteIndex);
-                    }
-                    else
-                    {
-                        Debug.Log("change to old");
-                        spriteRenderer.sprite = oldSprite;
-                    }
-
-                    lastBlinkTime = Time.unscaledTime;
-                }
-
-                return;
-            }
-            else
-            {
-                ChangeState(state);
-            }
-        }
     }
 
     void BeginChangeState(int newState)
     {
-        //CancelInvoke("ResetFireAnimatorController");
-
         anim.enabled = false;
-
-        changeStateBeginTime = Time.unscaledTime;
 
         oldSprite = spriteRenderer.sprite;
         state = newState;
@@ -112,7 +76,8 @@ public class Activity_StateManagement : Activity
 
         Debug.Log("Sprite编号：" + spriteIndex);
 
-        isChangingState = true;
+        pauseTimerHandler = Scheduler.instance.Schedule(changeStatePauseTime, false, OnTimesUp_ChangeState);
+        blinkTimerHandler = Scheduler.instance.Schedule(blinkInterval, true, OnTimesUp_ChangeStateBlink);
 
         if (newState == AppConst.MARIO_SMALL)
         {
@@ -132,11 +97,29 @@ public class Activity_StateManagement : Activity
         Time.timeScale = 0;
     }
 
+    void OnTimesUp_ChangeState()
+    {
+        Scheduler.instance.Deschedule(blinkTimerHandler);
+        ChangeState(state);
+    }
+
+    void OnTimesUp_ChangeStateBlink()
+    {
+        if (spriteRenderer.sprite == oldSprite)
+        {
+            Debug.Log("change to new");
+            ChangeSprite(state, spriteIndex);
+        }
+        else
+        {
+            Debug.Log("change to old");
+            spriteRenderer.sprite = oldSprite;
+        }
+    }
+
     void ChangeState(int newState)
     {
         Time.timeScale = 1;
-        isChangingState = false;
-
         anim.enabled = true;
 
         float height = 1;

@@ -4,19 +4,23 @@ using UnityEngine;
 
 public class Stopwatch
 {
+    public bool isRepeat;
+    public bool canRemove;
     public bool isCounting;
-
     public float startTime;
     public float endTime;
+    public float interval;
 
-    public float maxTime;
-
-    public float normalizedTime { get { return Mathf.Clamp01(time / maxTime); } }
+    public float normalizedTime { get { return Mathf.Clamp01(time / interval); } }
     public float time;
 
-    public Stopwatch(float maxTime = 1)
+    public System.Action onTimesUp;
+
+    public Stopwatch(float interval, bool repeat, System.Action callback)
     {
-        this.maxTime = maxTime;
+        this.interval = interval;
+        this.isRepeat = repeat;
+        this.onTimesUp = callback;
     }
 
     public void Start()
@@ -44,6 +48,25 @@ public class Stopwatch
         else
         {
             return 0;
+        }
+    }
+
+    public void Update()
+    {
+        if(Time.realtimeSinceStartup - startTime >= interval)
+        {
+            if(onTimesUp != null)
+            {
+                onTimesUp();
+                if(isRepeat)
+                {
+                    startTime = Time.realtimeSinceStartup;
+                }
+                else
+                {
+                    onTimesUp = null;
+                }
+            }
         }
     }
 }

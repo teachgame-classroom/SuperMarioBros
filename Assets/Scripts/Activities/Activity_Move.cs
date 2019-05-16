@@ -8,22 +8,28 @@ public class Activity_Move : Activity
     private float movePower;
     private Rigidbody2D body;
 
+    private Vector2 inputAxis = new Vector2(0,0);
+
     public Activity_Move(Actor owner, float movePower) : base(owner)
     {
         body = owner.GetComponent<Rigidbody2D>();
         this.movePower = movePower;
         input = (Activity_Input)owner.activities[typeof(Activity_Input)];
+        input.onAxis += OnAxis;
     }
 
     public override void Update()
     {
-        float h = input.h;
-
-        Vector3 force = Vector3.right * h;
+        Vector3 force = Vector3.right * inputAxis.x;
 
         if (Time.timeScale > 0)
         {
             body.AddForce(force * movePower);
         }
+    }
+
+    private void OnAxis(float h, float v)
+    {
+        inputAxis.Set(h, v);
     }
 }
