@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GameDevTools;
 
 public class CoinRotate : MonoBehaviour, IScore
 {
@@ -24,8 +25,8 @@ public class CoinRotate : MonoBehaviour, IScore
 
     private void Pop()
     {
-        GameController.instance.AddScore(this);
-
+        //GameController.instance.AddScore(this);
+        EventManager.ExecuteEvent<IScore>("AddScoreEvent", this);
         transform.position = originPos;
         GetComponent<Rigidbody2D>().velocity = Vector3.up * popupSpeed;
         DeactiveDelay(0.55f);

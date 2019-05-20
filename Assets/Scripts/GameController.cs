@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GameDevTools;
 
 public class GameController : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class GameController : MonoBehaviour
     {
         instance = this;
         mario = GameObject.Find("Mario").GetComponent<Mario>();
+        EventManager.RegisterEvent<IScore>("AddScoreEvent", AddScore);
     }
 
     // Start is called before the first frame update

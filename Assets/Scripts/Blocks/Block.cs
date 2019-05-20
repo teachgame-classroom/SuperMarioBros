@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GameDevTools;
 
 public class Block : MonoBehaviour, IHealth
 {
@@ -22,7 +23,7 @@ public class Block : MonoBehaviour, IHealth
     {
         currentHitCount = maxHitCount;
         anim = GetComponent<Animator>();
-        //BreakBlock();
+        EventManager.RegisterEvent("MarioDie", OnMarioDie);
     }
 
     // Update is called once per frame
@@ -59,6 +60,11 @@ public class Block : MonoBehaviour, IHealth
                 return;
             }
         }
+    }
+
+    void OnMarioDie()
+    {
+        BreakBlock();
     }
 
     protected virtual void BreakBlock()

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using GameDevTools;
 
 public class Mario : Actor, IHealth
 {
@@ -716,5 +717,6 @@ public class Mario : Actor, IHealth
         Camera.main.GetComponent<AudioSource>().loop = false;
         Camera.main.GetComponent<AudioSource>().Play();
         Invoke("DieFall", 0.5f);
+        EventManager.ExecuteEvent("MarioDie");
     }
 }

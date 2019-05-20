@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GameDevTools;
 
 public class Activity_Input : Activity
 {
@@ -16,7 +17,6 @@ public class Activity_Input : Activity
 
     public Activity_Input(Actor owner) : base(owner)
     {
-
     }
 
     public float h { get; private set; }

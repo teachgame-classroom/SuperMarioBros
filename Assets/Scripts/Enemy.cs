@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GameDevTools;
 
 public class Enemy : MonoBehaviour, IScore, IHealth
 {
@@ -30,6 +31,8 @@ public class Enemy : MonoBehaviour, IScore, IHealth
         kickClip = Resources.Load<AudioClip>("Sounds/smb_kick");
 
         _currentHp = _maxHp;
+        EventManager.RegisterEvent("MarioDie", OnMarioDie);
+        
     }
 
     // Update is called once per frame
@@ -108,5 +111,10 @@ public class Enemy : MonoBehaviour, IScore, IHealth
             GameController.instance.AddScore(this);
             OnStomp();
         }
+    }
+
+    void OnMarioDie()
+    {
+        OnHit(Vector3.left);
     }
 }
