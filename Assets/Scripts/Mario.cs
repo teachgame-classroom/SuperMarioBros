@@ -66,6 +66,8 @@ public class Mario : Actor, IHealth
 
     private List<Activity> actList = new List<Activity>();
 
+    private ActivityContainer activityContainer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -85,27 +87,31 @@ public class Mario : Actor, IHealth
         _currentHp = _maxHp;
 
         InitActivityContainer();
-
-        //actList.Add(new Activity_Move(this, movePower));
-        //actList.Add(new Activity_Direction(this));
-
     }
 
     private void InitActivityContainer()
     {
-        _activities.Add(typeof(Activity_Input), new Activity_Input(this));
-        _activities.Add(typeof(Activity_Move), new Activity_Move(this, 20));
-        _activities.Add(typeof(Activity_Direction), new Activity_Direction(this));
-        _activities.Add(typeof(Activity_StateManagement), new Activity_StateManagement(this, AppConst.MARIO_SMALL));
+        activityContainer = new ActivityContainer(this);
+
+        activityContainer.Create<Activity_Input>();
+        activityContainer.Create<Activity_Move>();
+        activityContainer.Create<Activity_Direction>();
+        activityContainer.Create<Activity_StateManagement>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        foreach (Activity act in _activities.Values)
-        {
-            act.Update();
-        }
+        activityContainer.Get<Activity_Input>().Update();
+        activityContainer.Get<Activity_Move>().Update();
+        activityContainer.Get<Activity_Direction>().Update();
+        activityContainer.Get<Activity_StateManagement>().Update();
+
+
+        //foreach (Activity act in _activities.Values)
+        //{
+        //    act.Update();
+        //}
 
         float h;
         float v;

@@ -10,6 +10,8 @@ public class Activity_Move : Activity
 
     private Vector2 inputAxis = new Vector2(0,0);
 
+    public Activity_Move() : base() { }
+
     public Activity_Move(Actor owner, float movePower) : base(owner)
     {
         body = owner.GetComponent<Rigidbody2D>();
@@ -26,6 +28,16 @@ public class Activity_Move : Activity
         {
             body.AddForce(force * movePower);
         }
+    }
+
+    public override void SetOwner(Actor owner)
+    {
+        base.SetOwner(owner);
+        this.movePower = ((Mario)owner).movePower;
+
+        body = owner.GetComponent<Rigidbody2D>();
+        input = container.Get<Activity_Input>();
+        input.onAxis += OnAxis;
     }
 
     private void OnAxis(float h, float v)

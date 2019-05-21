@@ -8,12 +8,22 @@ public class Activity_Direction : Activity
     private Transform transform;
     private Vector2 inputAxis;
 
+    public Activity_Direction() : base() { }
 
     public Activity_Direction(Actor owner): base(owner)
     {
         transform = owner.transform;
         input = (Activity_Input)owner.activities[typeof(Activity_Input)];
         input.onAxis += OnAxis;
+    }
+
+    public override void SetOwner(Actor owner)
+    {
+        base.SetOwner(owner);
+        transform = owner.transform;
+        input = container.Get<Activity_Input>();
+        input.onAxis += OnAxis;
+
     }
 
     public override void Update()

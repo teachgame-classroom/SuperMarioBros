@@ -15,6 +15,8 @@ public class Activity_Input : Activity
     public System.Action onButtonDown_Test3;
     public System.Action onButtonDown_Test4;
 
+    public Activity_Input() : base() { }
+
     public Activity_Input(Actor owner) : base(owner)
     {
     }
@@ -43,7 +45,6 @@ public class Activity_Input : Activity
         v = Input.GetAxis("Vertical");
 
         if (onAxis != null) onAxis(h,v);
-
 
         //fireButton = Input.GetKeyDown(KeyCode.J);
 

@@ -34,6 +34,8 @@ public class Activity_StateManagement : Activity
     private Sprite[] mario_b;
     private Sprite[] mario_f;
 
+    public Activity_StateManagement() : base() { }
+
     public Activity_StateManagement(Actor owner, int state) : base(owner)
     {
         this.state = state;
@@ -61,6 +63,33 @@ public class Activity_StateManagement : Activity
 
     public override void Update()
     {
+    }
+
+    public override void SetOwner(Actor owner)
+    {
+        base.SetOwner(owner);
+
+        this.state = ((Mario)owner).state;
+        input = container.Get<Activity_Input>();
+
+        body = owner.GetComponent<Rigidbody2D>();
+        col = owner.GetComponent<Collider2D>();
+        anim = owner.GetComponent<Animator>();
+        spriteRenderer = owner.GetComponent<SpriteRenderer>();
+
+        mario_s = ((Mario)owner).mario_s;
+        mario_b = ((Mario)owner).mario_b;
+        mario_f = ((Mario)owner).mario_f;
+        marioControllers = ((Mario)owner).marioControllers;
+
+        powerupClip = Resources.Load<AudioClip>("Sounds/smb_powerup");
+        pipeClip = Resources.Load<AudioClip>("Sounds/smb_pipe");
+        dieClip = Resources.Load<AudioClip>("Sounds/smb_mariodie");
+
+        input.onButtonDown_Test1 += () => { BeginChangeState(AppConst.MARIO_SMALL); };
+        input.onButtonDown_Test2 += () => { BeginChangeState(AppConst.MARIO_BIG); };
+        input.onButtonDown_Test3 += () => { BeginChangeState(AppConst.MARIO_FIRE); };
+        input.onButtonDown_Test4 += () => { Die(); };
     }
 
     void BeginChangeState(int newState)
