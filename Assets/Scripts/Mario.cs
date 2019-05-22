@@ -93,19 +93,24 @@ public class Mario : Actor, IHealth
     {
         activityContainer = new ActivityContainer(this);
 
+        activityContainer.Create<Activity_UpdateAnim>();
         activityContainer.Create<Activity_Input>();
+        activityContainer.Create<Activity_Raycast>();
         activityContainer.Create<Activity_Move>();
         activityContainer.Create<Activity_Direction>();
         activityContainer.Create<Activity_StateManagement>();
+        activityContainer.Create<Activity_Health>();
+        activityContainer.Create<Activity_Jump>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        activityContainer.Get<Activity_Input>().Update();
-        activityContainer.Get<Activity_Move>().Update();
-        activityContainer.Get<Activity_Direction>().Update();
-        activityContainer.Get<Activity_StateManagement>().Update();
+        activityContainer.Update();
+        //activityContainer.Get<Activity_Input>().Update();
+        //activityContainer.Get<Activity_Move>().Update();
+        //activityContainer.Get<Activity_Direction>().Update();
+        //activityContainer.Get<Activity_StateManagement>().Update();
 
 
         //foreach (Activity act in _activities.Values)
@@ -156,17 +161,17 @@ public class Mario : Actor, IHealth
                 // 处于无敌状态
                 if (invincible)
                 {
-                    Update_Invincible();
+                    //Update_Invincible();
                 }
 
-                isOnGround = CheckGroundAndEnemy();
+                //isOnGround = CheckGroundAndEnemy();
                 Debug.Log("OnGround:" + isOnGround);
-                bool isHurt = CheckHurt();
+                //bool isHurt = CheckHurt();
 
-                if (isHurt)
-                {
-                    Update_Hurt();
-                }
+                //if (isHurt)
+                //{
+                //    Update_Hurt();
+                //}
 
                 //Update_Direction(h);
                 //Update_Move(h);
@@ -190,7 +195,7 @@ public class Mario : Actor, IHealth
             }
         }
 
-        Update_Animator();
+        //Update_Animator();
     }
 
     private void Update_Air()
@@ -215,11 +220,11 @@ public class Mario : Actor, IHealth
         speed = body.velocity.magnitude;
         isBreaking = ShouldBreak(body.velocity.x, h);
 
-        if (jumpButton)
-        {
-            body.AddForce(Vector3.up * jumpMaxPower, ForceMode2D.Impulse);
-            isJumpingUp = true;
-        }
+        //if (jumpButton)
+        //{
+        //    body.AddForce(Vector3.up * jumpMaxPower, ForceMode2D.Impulse);
+        //    isJumpingUp = true;
+        //}
     }
 
     private void Update_Animator()

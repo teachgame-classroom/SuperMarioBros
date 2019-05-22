@@ -5,6 +5,9 @@ using UnityEngine;
 public class Activity_Move : Activity
 {
     protected Activity_Input input;
+    protected Activity_UpdateAnim updateAnim;
+
+
     private float movePower;
     private Rigidbody2D body;
 
@@ -14,10 +17,7 @@ public class Activity_Move : Activity
 
     public Activity_Move(Actor owner, float movePower) : base(owner)
     {
-        body = owner.GetComponent<Rigidbody2D>();
-        this.movePower = movePower;
-        input = (Activity_Input)owner.activities[typeof(Activity_Input)];
-        input.onAxis += OnAxis;
+        SetOwner(owner);
     }
 
     public override void Update()
@@ -28,17 +28,35 @@ public class Activity_Move : Activity
         {
             body.AddForce(force * movePower);
         }
+
+        float speed = body.velocity.magnitude;
+
+        updateAnim.speed = speed;
+        updateAnim.isBreaking = ShouldBreak(speed, inputAxis.x);
     }
 
     public override void SetOwner(Actor owner)
     {
         base.SetOwner(owner);
         this.movePower = ((Mario)owner).movePower;
-
         body = owner.GetComponent<Rigidbody2D>();
         input = container.Get<Activity_Input>();
         input.onAxis += OnAxis;
+        updateAnim = container.Get<Activity_UpdateAnim>();
     }
+
+    bool ShouldBreak(float speed, float accerlation)
+    {
+        if (speed > 1 && accerlation < 0 || speed < -1 && accerlation > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 
     private void OnAxis(float h, float v)
     {

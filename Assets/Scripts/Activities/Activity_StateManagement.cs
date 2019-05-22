@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using GameDevTools;
 public class Activity_StateManagement : Activity
 {
     private Activity_Input input;
@@ -17,8 +17,6 @@ public class Activity_StateManagement : Activity
     private Sprite oldSprite;
     private int spriteIndex;
 
-    private bool invincible;
-    private float invincibleBeginTime;
 
     private float changeStatePauseTime = 1f;
     private float blinkInterval = 0.05f;
@@ -38,27 +36,7 @@ public class Activity_StateManagement : Activity
 
     public Activity_StateManagement(Actor owner, int state) : base(owner)
     {
-        this.state = state;
-        input = (Activity_Input)owner.activities[typeof(Activity_Input)];
-
-        body = owner.GetComponent<Rigidbody2D>();
-        col = owner.GetComponent<Collider2D>();
-        anim = owner.GetComponent<Animator>();
-        spriteRenderer = owner.GetComponent<SpriteRenderer>();
-
-        powerupClip = Resources.Load<AudioClip>("Sounds/smb_powerup");
-        pipeClip = Resources.Load<AudioClip>("Sounds/smb_pipe");
-        dieClip = Resources.Load<AudioClip>("Sounds/smb_mariodie");
-
-        mario_s = ((Mario)owner).mario_s;
-        mario_b = ((Mario)owner).mario_b;
-        mario_f = ((Mario)owner).mario_f;
-        marioControllers = ((Mario)owner).marioControllers;
-
-        input.onButtonDown_Test1 += () => { BeginChangeState(AppConst.MARIO_SMALL); };
-        input.onButtonDown_Test2 += () => { BeginChangeState(AppConst.MARIO_BIG); };
-        input.onButtonDown_Test3 += () => { BeginChangeState(AppConst.MARIO_FIRE); };
-        input.onButtonDown_Test4 += () => { Die(); };
+        SetOwner(owner);
     }
 
     public override void Update()
@@ -90,6 +68,20 @@ public class Activity_StateManagement : Activity
         input.onButtonDown_Test2 += () => { BeginChangeState(AppConst.MARIO_BIG); };
         input.onButtonDown_Test3 += () => { BeginChangeState(AppConst.MARIO_FIRE); };
         input.onButtonDown_Test4 += () => { Die(); };
+
+        EventManager.RegisterEvent("MarioHurt", OnMarioHurt);
+    }
+
+    void OnMarioHurt()
+    {
+        if(state == AppConst.MARIO_BIG || state == AppConst.MARIO_FIRE)
+        {
+            BeginChangeState(AppConst.MARIO_SMALL);
+        }
+        else if (state == AppConst.MARIO_SMALL)
+        {
+            Die();
+        }
     }
 
     void BeginChangeState(int newState)
@@ -113,8 +105,6 @@ public class Activity_StateManagement : Activity
             int playerMask = LayerMask.NameToLayer("Player");
             Physics2D.SetLayerCollisionMask(playerMask, LayerMask.GetMask(new string[] { "Stage" }));
 
-            invincible = true;
-            invincibleBeginTime = Time.unscaledTime;
             AudioSource.PlayClipAtPoint(pipeClip, Camera.main.transform.position);
         }
         else
@@ -124,6 +114,7 @@ public class Activity_StateManagement : Activity
         }
 
         Time.timeScale = 0;
+        EventManager.ExecuteEvent<int>("MarioChangeState", newState);
     }
 
     void OnTimesUp_ChangeState()
@@ -133,6 +124,11 @@ public class Activity_StateManagement : Activity
     }
 
     void OnTimesUp_ChangeStateBlink()
+    {
+        ResetSprite();
+    }
+
+    public void ResetSprite()
     {
         if (spriteRenderer.sprite == oldSprite)
         {
@@ -176,6 +172,7 @@ public class Activity_StateManagement : Activity
         anim.runtimeAnimatorController = marioControllers[newState];
 
         Treasure.OnMarioStateChange(newState);
+
     }
 
     void ChangeSprite(int state, int index)
@@ -208,6 +205,15 @@ public class Activity_StateManagement : Activity
         Camera.main.GetComponent<AudioSource>().clip = dieClip;
         Camera.main.GetComponent<AudioSource>().loop = false;
         Camera.main.GetComponent<AudioSource>().Play();
-        //Invoke("DieFall", 0.5f);
+        Scheduler.instance.Schedule(0.5f, false, DieFall);
     }
+
+    void DieFall()
+    {
+        body.isKinematic = false;
+        body.velocity = Vector2.up * 20;
+        body.gravityScale = 2.5f;
+        owner.GetComponent<Collider2D>().enabled = false;
+    }
+
 }

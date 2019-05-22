@@ -14,6 +14,14 @@ public class ActivityContainer
         this.owner = owner;
     }
 
+    public void Update()
+    {
+        foreach( Activity activity in actList )
+        {
+            activity.Update();
+        }
+    }
+
     public void Create<T>() where T : Activity, new()
     {
         T newActivity = new T();
