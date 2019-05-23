@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameDevTools;
 
-public class Enemy : MonoBehaviour, IScore, IHealth
+public class Enemy : Actor, IScore, IHealth
 {
     private Animator anim;
     private Collider2D col;
     private Rigidbody2D body;
     private AudioClip stompClip;
     private AudioClip kickClip;
+
+    private ActivityContainer activityContainer;
 
 
     public int score { get { return 100; } }
@@ -31,14 +33,24 @@ public class Enemy : MonoBehaviour, IScore, IHealth
         kickClip = Resources.Load<AudioClip>("Sounds/smb_kick");
 
         _currentHp = _maxHp;
+
+        InitActivityContainer();
+
         EventManager.RegisterEvent("MarioDie", OnMarioDie);
         
+
+    }
+
+    // Update is called once per frame
+    private void InitActivityContainer()
+    {
+        activityContainer = new ActivityContainer(this, "Enemy");
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        activityContainer.Update();
     }
 
     public void OnStomp()
@@ -116,5 +128,10 @@ public class Enemy : MonoBehaviour, IScore, IHealth
     void OnMarioDie()
     {
         OnHit(Vector3.left);
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        EventManager.ExecuteEvent<Actor, Collision2D>("EnemyCollisionEnter", this, collision);
     }
 }

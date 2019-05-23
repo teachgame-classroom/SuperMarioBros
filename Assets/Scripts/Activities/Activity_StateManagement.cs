@@ -8,6 +8,8 @@ public class Activity_StateManagement : Activity
 
     public int state { get; private set; }
 
+    public bool hasReachedGoal { get; private set; }
+
     private Rigidbody2D body;
     private Collider2D col;
     private Animator anim;
@@ -16,7 +18,6 @@ public class Activity_StateManagement : Activity
 
     private Sprite oldSprite;
     private int spriteIndex;
-
 
     private float changeStatePauseTime = 1f;
     private float blinkInterval = 0.05f;
@@ -70,6 +71,7 @@ public class Activity_StateManagement : Activity
         input.onButtonDown_Test4 += () => { Die(); };
 
         EventManager.RegisterEvent("MarioHurt", OnMarioHurt);
+        EventManager.RegisterEvent("MarioReachGoal", OnMarioReachGoal);
     }
 
     void OnMarioHurt()
@@ -82,6 +84,11 @@ public class Activity_StateManagement : Activity
         {
             Die();
         }
+    }
+
+    void OnMarioReachGoal()
+    {
+        hasReachedGoal = true;
     }
 
     void BeginChangeState(int newState)
@@ -169,7 +176,8 @@ public class Activity_StateManagement : Activity
         (col as BoxCollider2D).size = new Vector2((col as BoxCollider2D).size.x, height);
         (col as BoxCollider2D).offset = new Vector2(0, height / 2);
 
-        anim.runtimeAnimatorController = marioControllers[newState];
+        EventManager.ExecuteEvent<int>("MarioChangeState", newState);
+        //anim.runtimeAnimatorController = marioControllers[newState];
 
         Treasure.OnMarioStateChange(newState);
 

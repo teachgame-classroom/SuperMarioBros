@@ -10,12 +10,16 @@ public class Activity_Input : Activity
     public System.Action onButtonDown_Fire;
     public System.Action onButtonDown_Jump;
 
+    public System.Action onButtonUp_Jump;
+
     public System.Action onButtonDown_Test1;
     public System.Action onButtonDown_Test2;
     public System.Action onButtonDown_Test3;
     public System.Action onButtonDown_Test4;
 
-    public Activity_Input() : base() { }
+    protected Activity_StateManagement stateManagement;
+
+    public Activity_Input() : base() { Debug.Log("Input Created"); }
 
     public Activity_Input(Actor owner) : base(owner)
     {
@@ -34,7 +38,13 @@ public class Activity_Input : Activity
 
     public override void Update()
     {
+        if (stateManagement == null) stateManagement = container.Get<Activity_StateManagement>();
+
+        if (stateManagement.hasReachedGoal) return;
+
         if (onButtonDown_Jump != null && Input.GetKeyDown(KeyCode.K)) onButtonDown_Jump();
+        if (onButtonUp_Jump != null && Input.GetKeyUp(KeyCode.K)) onButtonUp_Jump();
+
         if (onButtonDown_Fire != null && Input.GetKeyDown(KeyCode.J)) onButtonDown_Fire();
         if (onButtonDown_Test1 != null && Input.GetKeyDown(KeyCode.Alpha1)) onButtonDown_Test1();
         if (onButtonDown_Test2 != null && Input.GetKeyDown(KeyCode.Alpha2)) onButtonDown_Test2();

@@ -8,7 +8,7 @@ public class Activity_Move : Activity
     protected Activity_UpdateAnim updateAnim;
 
 
-    private float movePower;
+    public float movePower { get; private set; }
     private Rigidbody2D body;
 
     private Vector2 inputAxis = new Vector2(0,0);
@@ -32,7 +32,7 @@ public class Activity_Move : Activity
         float speed = body.velocity.magnitude;
 
         updateAnim.speed = speed;
-        updateAnim.isBreaking = ShouldBreak(speed, inputAxis.x);
+        updateAnim.isBreaking = ShouldBreak(body.velocity.x, inputAxis.x);
     }
 
     public override void SetOwner(Actor owner)

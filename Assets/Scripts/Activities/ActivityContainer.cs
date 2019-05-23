@@ -2,16 +2,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class ActivityContainer
 {
     Actor owner;
     List<Activity> actList;
 
-    public ActivityContainer(Actor owner)
+    public ActivityContainer(Actor owner, string name)
     {
         actList = new List<Activity>();
         this.owner = owner;
+
+        string fileName = "Activity_" + name + ".txt";
+
+        string[] actNames = File.ReadAllLines(Application.streamingAssetsPath + "/" + fileName);
+
+        foreach(string actName in actNames)
+        {
+            Add(ActivityDictionary.Create(actName));
+        }
     }
 
     public void Update()
@@ -20,6 +30,14 @@ public class ActivityContainer
         {
             activity.Update();
         }
+    }
+
+    public void Add(Activity newActivity)
+    {
+        newActivity.SetContainer(this);
+        newActivity.SetOwner(this.owner);
+
+        actList.Add(newActivity);
     }
 
     public void Create<T>() where T : Activity, new()

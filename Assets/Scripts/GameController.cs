@@ -18,6 +18,8 @@ public class GameController : MonoBehaviour
         instance = this;
         mario = GameObject.Find("Mario").GetComponent<Mario>();
         EventManager.RegisterEvent<IScore>("AddScoreEvent", AddScore);
+
+        ActivityDictionary.Init();
     }
 
     // Start is called before the first frame update

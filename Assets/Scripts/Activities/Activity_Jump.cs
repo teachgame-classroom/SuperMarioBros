@@ -23,12 +23,17 @@ public class Activity_Jump : Activity
         body = owner.GetComponent<Rigidbody2D>();
         jumpMaxPower = ((Mario)owner).jumpMaxPower;
         input.onButtonDown_Jump += Jump;
+        input.onButtonUp_Jump += Dive;
+
         jumpClip = Resources.Load<AudioClip>("Sounds/smb_jump-small");
     }
 
     public override void Update()
     {
-;
+        if (body.velocity.y < 0)
+        {
+            isJumpingUp = false;
+        }
     }
 
     void Jump()
@@ -38,6 +43,16 @@ public class Activity_Jump : Activity
             body.AddForce(Vector3.up * jumpMaxPower, ForceMode2D.Impulse);
             isJumpingUp = true;
             AudioSource.PlayClipAtPoint(jumpClip, Camera.main.transform.position);
+        }
+    }
+
+    void Dive()
+    {
+        if (isJumpingUp)
+        {
+            Debug.Log("Dive");
+            isJumpingUp = false;
+            body.velocity = new Vector2(body.velocity.x, Mathf.Min(body.velocity.y, 10));
         }
     }
 }
