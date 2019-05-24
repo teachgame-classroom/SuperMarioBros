@@ -16,11 +16,11 @@ public class ActivityContainer
 
         string fileName = "Activity_" + name + ".txt";
 
-        string[] actNames = File.ReadAllLines(Application.streamingAssetsPath + "/" + fileName);
+        string[] jsons = File.ReadAllLines(Application.streamingAssetsPath + "/" + fileName);
 
-        foreach(string actName in actNames)
+        foreach(string json in jsons)
         {
-            Add(ActivityDictionary.Create(actName));
+            Add(ActivityDictionary.CreateFromJson(json));
         }
     }
 

@@ -6,5 +6,5 @@
 {"name":"StateManagement"}
 {"name":"Health"}
 {"name":"Shoot"}
-{"name":"Jump","jumpMaxPower":25.0,"jumpClipName":"smb_jump-small"}
+{"name":"Jump","jumpMaxPower":15.0,"jumpClipName":"smb_jump-small"}
 {"name":"Goal"}

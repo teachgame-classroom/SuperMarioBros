@@ -27,5 +27,15 @@ public abstract class Activity
         this.container = activityContainer;
     }
 
+    public virtual void SetInfo(IActivityInfo info)
+    {
+
+    }
+
+    public virtual void SetJson(string json)
+    {
+
+    }
+
     public abstract void Update();
 }

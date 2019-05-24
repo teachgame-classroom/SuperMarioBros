@@ -1,0 +1,1 @@
+{"jumpMaxPower":15.0,"jumpClipName":"smb_jump-small"}

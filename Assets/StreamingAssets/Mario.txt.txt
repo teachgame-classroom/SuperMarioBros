@@ -1,0 +1,2 @@
+{"name":"Move","movePower":20.0}
+{"name":"Jump","jumpMaxPower":15.0,"jumpClipName":"smb_jump-small"}

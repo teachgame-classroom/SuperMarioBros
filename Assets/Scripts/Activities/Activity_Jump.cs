@@ -5,6 +5,8 @@ using UnityEngine;
 public class Activity_Jump : Activity
 {
     protected float jumpMaxPower;
+    protected string jumpClipName;
+
     protected bool isJumpingUp;
 
     protected Activity_Raycast raycast;
@@ -15,17 +17,31 @@ public class Activity_Jump : Activity
 
     public Activity_Jump() : base(){ }
 
+    public override void SetInfo(IActivityInfo info)
+    {
+        ActivityInfo_Jump info_Jump = (ActivityInfo_Jump)info;
+
+        this.jumpMaxPower = info_Jump.jumpMaxPower;
+        this.jumpClipName = info_Jump.jumpClipName;
+    }
+
+    public override void SetJson(string json)
+    {
+        ActivityInfo_Jump info_jump = JsonUtility.FromJson<ActivityInfo_Jump>(json);
+        SetInfo(info_jump);
+    }
+
     public override void SetOwner(Actor owner)
     {
         base.SetOwner(owner);
         input = container.Get<Activity_Input>();
         raycast = container.Get<Activity_Raycast>();
         body = owner.GetComponent<Rigidbody2D>();
-        jumpMaxPower = ((Mario)owner).jumpMaxPower;
+        //jumpMaxPower = ((Mario)owner).jumpMaxPower;
         input.onButtonDown_Jump += Jump;
         input.onButtonUp_Jump += Dive;
 
-        jumpClip = Resources.Load<AudioClip>("Sounds/smb_jump-small");
+        jumpClip = Resources.Load<AudioClip>("Sounds/" + jumpClipName);
     }
 
     public override void Update()
@@ -55,4 +71,5 @@ public class Activity_Jump : Activity
             body.velocity = new Vector2(body.velocity.x, Mathf.Min(body.velocity.y, 10));
         }
     }
+
 }

@@ -38,7 +38,7 @@ public class Activity_Move : Activity
     public override void SetOwner(Actor owner)
     {
         base.SetOwner(owner);
-        this.movePower = ((Mario)owner).movePower;
+        //this.movePower = ((Mario)owner).movePower;
         body = owner.GetComponent<Rigidbody2D>();
         input = container.Get<Activity_Input>();
         input.onAxis += OnAxis;
@@ -62,4 +62,19 @@ public class Activity_Move : Activity
     {
         inputAxis.Set(h, v);
     }
+
+    public override void SetInfo(IActivityInfo info)
+    {
+        ActivityInfo_Move info_move = (ActivityInfo_Move)info;
+        movePower = info_move.movePower;
+
+        Debug.Log("movePower设置为" + movePower);
+    }
+
+    public override void SetJson(string json)
+    {
+        ActivityInfo_Move info_move = JsonUtility.FromJson<ActivityInfo_Move>(json);
+        SetInfo(info_move);
+    }
+
 }
